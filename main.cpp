@@ -1,89 +1,38 @@
-//collaborated with Chloe Georgiou
-#include "IntList.h"
 #include <iostream>
+#include "arithmeticExpression.h"
+
 using namespace std;
 
 int main(){
-  int num;
-  cout << "Enter number from 1-4: ";
-  cin >> num;
-  cout << endl;
+    string expr1 = "a+b*c";
+    arithmeticExpression ex1(expr1);
+    ex1.buildTree();
+    cout<<"expression 1: "<<expr1<<endl;
+    cout<<"infix: "; ex1.infix(); cout<<endl;
+    cout<<"prefix: "; ex1.prefix(); cout<<endl;
+    cout<<"postfix: "; ex1.postfix(); cout<<endl;
+    //ex1.visualizeTree("expr1.dot");
+    cout<<endl;
 
-  if (num == 1){
-    cout << "constructor ";
-    IntList test1;
+    string expr2 = "(a+b)*(c-d)";
+    arithmeticExpression ex2(expr2);
+    ex2.buildTree();
+    cout<<"expression 2: "<<expr2<<endl;
+    cout<<"infix: "; ex2.infix(); cout<<endl;
+    cout<<"prefix: "; ex2.prefix(); cout<<endl;
+    cout<<"postfix: "; ex2.postfix(); cout<<endl;
+    //ex2.visualizeTree("expr2.dot");
+    cout<<endl;
 
-    cout << "pushfront 5 6 ";
-    test1.push_front(5);
-    test1.push_front(6);
+    string expr3 = "a + b * c - ( d * e + f ) * g";
+    arithmeticExpression ex3(expr3);
+    ex3.buildTree();
+    cout<<"expression 3: "<<expr3<<endl;
+    cout<<"infix: "; ex3.infix(); cout<<endl;
+    cout<<"prefix: "; ex3.prefix(); cout<<endl;
+    cout<<"postfix: "; ex3.postfix(); cout<<endl;
+    //ex3.visualizeTree("expr3.dot");
+    cout<<endl;
 
-
-    cout << "reverse ";
-    test1.printReverse();
-
-    cout << " pushfront 10 11 ";
-    test1.push_front(10);
-    test1.push_front(11);
-
-    test1.pop_front();
-    cout << endl;
-  }
-
-  if (num == 2){
-    cout << "constructor: ";
-    IntList test2;
-
-    cout << "pushback 30 31 ";
-    test2.push_back(30);
-    test2.push_back(31);
-
-    cout << " reverse ";
-    test2.printReverse();
-
-    cout << " pushback 40 41 ";
-    test2.push_back(40);
-    test2.push_back(41);
-
-    cout << " reverse ";
-    test2.printReverse();
-
-    cout << " popback ";
-    test2.pop_back();
-    cout << endl;
-  }
-
-  if (num == 3){
-    cout << "constructor ";
-    IntList test2;
-    if(test2.empty()){
-      cout << "empty list " << endl;
-    }
-    cout << "pushback 15 16 17 ";
-    test2.push_back(15);
-    test2.push_back(16);
-    test2.push_back(17);
-    cout << test2 << endl;
-
-    cout << "reverse ";
-    test2.printReverse();
-
-    cout << " popback ";
-    test2.pop_back();
-    cout << test2 << endl;
-    cout << endl;
-  }
-
-  if (num == 4){
-    //<< operator test
-    IntList test2;
-    cout << "friend operator ";
-    cout << test2 << endl;
-    test2.push_front(10);
-    test2.push_front(11);
-    test2.push_front(12);
-    test2.pop_back();
-    test2.pop_back();
-    cout << test2 << endl;
-  }
-  return 0;
+    return 0;
 }
