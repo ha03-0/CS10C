@@ -1,89 +1,89 @@
 //collaborated with Chloe Georgiou
-#include "IntList.h"
 #include <iostream>
+#include <stdexcept>
+#include <vector>
 using namespace std;
 
-int main(){
-  int num;
-  cout << "Enter number from 1-4: ";
-  cin >> num;
-  cout << endl;
-
-  if (num == 1){
-    cout << "constructor ";
-    IntList test1;
-
-    cout << "pushfront 5 6 ";
-    test1.push_front(5);
-    test1.push_front(6);
-
-
-    cout << "reverse ";
-    test1.printReverse();
-
-    cout << " pushfront 10 11 ";
-    test1.push_front(10);
-    test1.push_front(11);
-
-    test1.pop_front();
-    cout << endl;
-  }
-
-  if (num == 2){
-    cout << "constructor: ";
-    IntList test2;
-
-    cout << "pushback 30 31 ";
-    test2.push_back(30);
-    test2.push_back(31);
-
-    cout << " reverse ";
-    test2.printReverse();
-
-    cout << " pushback 40 41 ";
-    test2.push_back(40);
-    test2.push_back(41);
-
-    cout << " reverse ";
-    test2.printReverse();
-
-    cout << " popback ";
-    test2.pop_back();
-    cout << endl;
-  }
-
-  if (num == 3){
-    cout << "constructor ";
-    IntList test2;
-    if(test2.empty()){
-      cout << "empty list " << endl;
+template<class T>
+unsigned min_index(const vector<T> &vals, unsigned index){
+  int position;
+  T smallestElement;
+  unsigned j;
+  smallestElement = vals.at(index);
+  position = index;
+  for (j=index+1; j < vals.size(); ++j){
+    if (vals.at(j) < smallestElement){
+      smallestElement = vals.at(j);
+      position = j;
     }
-    cout << "pushback 15 16 17 ";
-    test2.push_back(15);
-    test2.push_back(16);
-    test2.push_back(17);
-    cout << test2 << endl;
-
-    cout << "reverse ";
-    test2.printReverse();
-
-    cout << " popback ";
-    test2.pop_back();
-    cout << test2 << endl;
-    cout << endl;
   }
 
-  if (num == 4){
-    //<< operator test
-    IntList test2;
-    cout << "friend operator ";
-    cout << test2 << endl;
-    test2.push_front(10);
-    test2.push_front(11);
-    test2.push_front(12);
-    test2.pop_back();
-    test2.pop_back();
-    cout << test2 << endl;
+  return position;
+}
+template<class T>
+void selection_sort(vector<T> &vals){
+  int position;
+  T temp;
+  for (long unsigned int i = 0; i<vals.size(); ++i){
+    position = min_index(vals, i);
+    temp = vals.at(i);
+    vals.at(i) = vals.at(position);
+    vals.at(position) = temp;
   }
-  return 0;
+  return;
+}
+vector<char> createVector(){
+    int vecSize = rand() % 26;
+    char c = 'a';
+    vector<char> vals;
+    for(int i = 0; i < vecSize; i++)
+    {
+        vals.push_back(c);
+        c++;
+    }
+    return vals;
+}
+
+template<class T>
+T getElement(vector<T> vals, int index){
+  return vals.at(index);
+}
+
+
+int main(){
+  //Part one
+  vector <int> vInt;
+  vInt.push_back(10);
+  vInt.push_back(11);
+  vInt.push_back(12);
+
+  vInt.push_back(5);
+  vInt.push_back(6);
+  vInt.push_back(7);
+  selection_sort(vInt);
+  for (long unsigned int i = 0; i< vInt.size(); ++i){
+    cout << vInt.at(i) << " ";
+  }
+
+
+    //Part B
+     srand(time(0));
+     vector<char> vals = createVector();
+     char curChar;
+     int index;
+     int numOfRuns = 10;
+     while(--numOfRuns >= 0){
+         cout << "Enter a number: " << endl;
+         cin >> index;
+         try{
+         curChar = getElement(vals,index);
+         cout << "Element located at " << index << ": is " << curChar << endl;
+       }
+       catch (const out_of_range& excpt) {
+         cout << "out of range exception occured" << endl;
+       }
+    }
+
+
+    return 0;
 }
