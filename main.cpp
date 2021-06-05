@@ -1,282 +1,237 @@
-//lab partner is Chloe Georgiou and we collaborated
-#include <iostream>
-#include <string>
+// worked with Chloe
+#include<iostream>
+#include<cmath>
+#include<cstdlib>
+#include<ctime>
 using namespace std;
-#include "Playlist.h"
 
+const int CLOCKS_PER_MS = CLOCKS_PER_SEC/1000; //clock per milliseconds
 
-char PrintMenu(string playlist){
-  char input;
-  bool repeat = true;
+const int NUMBERS_SIZE = 50000;
 
-  while(repeat){
-    cout << playlist << " PLAYLIST MENU" << endl;
-    cout << "a - Add song" << endl;
-    cout << "d - Remove song" << endl;
-    cout << "c - Change position of song" << endl;
-    cout << "s - Output songs by specific artist" << endl;
-    cout << "t - Output total time of playlist (in seconds)" << endl;
-    cout << "o - Output full playlist" << endl;
-    cout << "q - Quit" << endl;
-    cout << endl;
-    cout << "Choose an option:" << endl;
-
-    cin>> input;
-    if(input == 'a' || input == 'd' || input == 'c' || input == 's' || input == 't' || input == 'o' || input == 'q'){
-      repeat = false;
-    }
-    else{
-      cout << "Invalid" << endl;
-    }
-  }
-  return input;
+int genRandInt(int low, int high) {
+   return low + rand() % (high - low + 1);
 }
-
-int main() {
-  PlaylistNode* head = 0;
-  //i'm not sure if i should set it to null or to 0 because in cs10b we were told to set it to 0
-  PlaylistNode* tail = 0;
-  string playlist;
-  char input;
-  string ID;
-  string newSong;
-  string newArtist;
-  int newLength;
-  int numOfNodes = 0;
-
-  cout << "Enter playlist's title:" << endl;
-  cout << endl;
-  getline(cin, playlist);
-  input = PrintMenu(playlist);
-
-  while(input != 'q'){
-    if(input == 'a'){
-      numOfNodes++;
-      cout << "ADD SONG" << endl;
-      cout << "Enter song's unique ID:";
-      cin.ignore();
-      getline(cin, ID);
-      cout << endl;
-      cout << "Enter song's name:";
-      getline(cin, newSong);
-      cout << endl;
-      cout << "Enter artist's name:";
-      getline(cin, newArtist);
-      cout << endl;
-      cout << "Enter song's length (in seconds):" << endl;
-      cin >> newLength;
-      cout << endl;// << endl;
-
-      PlaylistNode* num;
-      num = new PlaylistNode(ID, newSong, newArtist, newLength);
-      if(head == 0){
-        tail = num;
-        head = num;
-      }
-      else{
-        tail -> SetNext(num);
-        tail = tail-> GetNext();
-      }
+void fillArrays(int arr1[], int arr2[],int arr3[]){
+    for(int i = 0; i < NUMBERS_SIZE; ++i){
+        arr1[i] = genRandInt(0,NUMBERS_SIZE);
+        arr2[i] = arr1[i];
+        arr3[i] = arr1[i];
     }
-    if(input == 'd'){
-      PlaylistNode* curr;
-      cout << "REMOVE SONG" << endl;
-      cout << "Enter song's unique ID:";
-      cin.ignore();
-      getline(cin, ID);
-      cout << endl;
+}
+int Partition(int numbers[], int i, int k) {
+  int midpoint, pivot, temp, l, h;
+  bool done = false;
+   /* Pick middle value as pivot */
+   midpoint = i + (k - i) / 2;
+   pivot = numbers[midpoint];
 
-      if(numOfNodes == 0){}
-      else if (head-> GetID() == ID){
-        cout << "\"" << head->GetSongName() << "\"" << " removed." << endl << endl;
-        head = head->GetNext();
-        numOfNodes--;
+   /* Initialize variables */
+   l = i;
+   h = k;
+
+   while (!done) {
+      /* Increment l while numbers[l] < pivot */
+      while (numbers[l] < pivot) {
+         ++l;
       }
-      else if (tail ->GetID() == ID){
-        cout << "\"" << tail -> GetSongName() << "\"" << " removed" << endl << endl;
-        PlaylistNode* newTail = head;
-        PlaylistNode* deleteTail = head->GetNext();
-        while (deleteTail->GetNext() != 0){
-          newTail = deleteTail;
-          deleteTail = deleteTail->GetNext();
-        }
-        delete deleteTail;
-        newTail -> SetNext(0);
-        tail = newTail;
-        numOfNodes--;
+
+      /* Decrement h while pivot < numbers[h] */
+      while (pivot < numbers[h]) {
+         --h;
       }
-      else{
-        PlaylistNode* curr = head;
-        while(curr->GetNext() !=0){
-          if(curr->GetNext()->GetID() == ID){
-            cout << "\"" << curr-> GetNext() -> GetSongName() << "\"" << " removed." << endl << endl;
-            curr -> SetNext(curr-> GetNext()->GetNext());
-            numOfNodes--;
-          }
-          curr = curr -> GetNext();
-        }
-      }
-    }
-  if(input == 'c'){
-    int count = 1;
-    PlaylistNode* prev; //previous
-    PlaylistNode* curr = head; // Song
-    PlaylistNode* cSONG = head;  // song
-    //PlaylistNode* nSONG = head;
-    PlaylistNode songT; //Title
-    int pos1; //cur
-    int pos2; // new
-    int i = 1;
-    //i = 1;
-      cout << "CHANGE POSITION OF SONG" << endl;
-      cout << "Enter song's current position:";
-      cin >> pos1;
-      cout << endl;
-      cout << "Enter new position for song:";
-      cin >> pos2;
-      cout << endl;
-    if(pos2 < 1){
-      pos2 = 1;
-    }
-    if (pos2 > numOfNodes){
-      pos2 = numOfNodes;
-    }
-    if (pos1 == pos2 || pos1 < 1 || pos1 > numOfNodes || numOfNodes == 0){}
-    else{
-      while (i < pos1){
-        cSONG = cSONG -> GetNext();
-        i++;
-      }
-      ID = cSONG->GetID();
-      songT = *cSONG;
-      if(pos2 < 2){
-        while (count != pos1){
-          if(curr -> GetNext() != 0){
-            prev = curr;
-            curr = curr -> GetNext();
-            count ++;
-        }
-        }
-        prev -> SetNext(curr->GetNext());
-        curr->SetNext(head);
-        head = curr;
-      }
-      else if(pos1 < 2){
-        if(pos2 == numOfNodes){
-          tail -> SetNext(head);
-          head = head -> GetNext();
-          tail -> GetNext()->SetNext(0);
-          tail = tail -> GetNext();
-        }
-        else{
-          if(pos2 >= numOfNodes){
-            pos2 = numOfNodes;
-          }
-          prev = head -> GetNext();
-          curr = head;
-          head = prev;
-          count = 1;
-          PlaylistNode* nPos = head;
-          PlaylistNode* nPrev;
-          while (count != pos2){
-            if(nPos -> GetNext() != 0){
-              nPrev = nPos;
-              nPos = nPos -> GetNext();
-              count++;
+      /* If there are zero or one items remaining,
+            all numbers are partitioned. Return h */
+            if (l >= h) {
+               done = true;
             }
-          }
-          curr -> SetNext(nPos);
-          nPrev -> SetNext(curr);
-        }
-      }
-      else if (pos2 >= numOfNodes){
-        PlaylistNode* nPos = head;
-        PlaylistNode* nPrev;
-        count = 1;
-        while (count != pos1){
-          if(curr ->GetNext() != 0){
-            prev = curr;
-            curr = curr ->GetNext();
-            count++;
-          }
-        }
-        prev -> SetNext(curr-> GetNext());
-        curr -> SetNext(0);
-        tail -> SetNext(curr);
-        tail = tail -> GetNext();
-      }
-      else{
-        while(count != pos1){
-          if(curr -> GetNext() != 0){
-            prev = curr;
-            curr = curr -> GetNext();
-            count++;
-          }
-        }
-        prev -> SetNext(curr -> GetNext());
-        count = 1;
-        PlaylistNode* nPos = head;
-        PlaylistNode* nPrev;
-        while ( count != pos2){
-          if(nPos ->GetNext() != 0){
-            nPrev = nPos;
-            nPos = nPos -> GetNext();
-            count ++;
-          }
-        }
-        curr -> SetNext(nPos);
-        nPrev->SetNext(curr);
-      }
-      cout << "\"" << songT.GetSongName() << "\"" << " moved to position " << pos2 << endl << endl;
-      }
-    }
+            else {
+               /* Swap numbers[l] and numbers[h],
+                   update l and h */
+               temp = numbers[l];
+               numbers[l] = numbers[h];
+               numbers[h] = temp;
 
-// 3
-    if (input == 's'){
-      string name;
-      int count = 0;
-      cout << "OUTPUT SONGS BY SPECIFIC ARTIST" << endl;
-      cout << "Enter artist's name:" << endl;
-      cin.ignore();
-      getline(cin,name);
-      cout<<endl;
+               ++l;
+               --h;
+            }
+         }
+         return h;
+      }
 
-      for(PlaylistNode* i = head; i != 0; i = i->GetNext()){
-        count ++;
-        if(i-> GetArtistName() == name){
-          cout << count << "." << endl;
-          i->PrintPlaylistNode();
-          cout << endl;
-        }
-      }
-    }
-    if(input == 't'){
-      int time = 0;
-      for (PlaylistNode* i = head; i != 0; i = i->GetNext()){
-        time += i -> GetSongLength();
-      }
-      cout << "OUTPUT TOTAL TIME OF PLAYLIST (IN SECONDS)" << endl;
-      cout << "Total time: " << time << " seconds" << endl;
-      cout << endl;
-    }
 
-    if (input == 'o'){
-      int count = 0;
-      cout << playlist << " - OUTPUT FULL PLAYLIST" << endl;
-      if (head == 0){
-        cout << "Playlist is empty" << endl << endl;
-    }
-    else{
-      for(PlaylistNode* i = head; i != 0; i = i->GetNext()){
-        count ++;
-        cout << count << "." << endl;
-        i -> PrintPlaylistNode();
-        cout << endl;
-      }
-    }
-  }
-    input = PrintMenu(playlist);
-  }
-   return 0;
+void Quicksort_midpoint(int numbers[], int i, int k) {
+   int j;
+
+   /* Base case: If 1 or zero elements,
+      partition is already sorted */
+   if (i >= k) {
+      return;
+   }
+
+   /* Partition the array.
+      Value j is the location of last
+      element in low partition. */
+   j = Partition(numbers, i, k);
+
+   /* Recursively sort low and high
+       partitions */
+   Quicksort_midpoint(numbers, i, j);
+   Quicksort_midpoint(numbers, j + 1, k);
 }
-// }
+int Partition_medianOfThree(int numbers[], int i, int k) {
+  int median, pivot, temp, l, h;
+  bool done = false;
+   /* Pick middle value as pivot */
+   int a,b,c;
+  /* Pick middle value as pivot */
+  a = numbers[i];
+  b = numbers[(i+k)/2];
+  c = numbers[k];
+//^ is exclusive or
+
+  if ((a >b) ^ (a >c)){
+    median = a;
+  }
+  else if ((b < a) ^ (b < c)){
+    median = b;
+  }
+  else {
+    median = c;
+  }
+
+
+
+
+   pivot = numbers[median];
+
+   /* Initialize variables */
+   l = i;
+   h = k;
+
+   while (!done) {
+      /* Increment l while numbers[l] < pivot */
+      while (numbers[l] < pivot) {
+         ++l;
+      }
+
+      /* Decrement h while pivot < numbers[h] */
+      while (pivot < numbers[h]) {
+         --h;
+      }
+      /* If there are zero or one items remaining,
+            all numbers are partitioned. Return h */
+            if (l >= h) {
+               done = true;
+            }
+            else {
+               /* Swap numbers[l] and numbers[h],
+                   update l and h */
+               temp = numbers[l];
+               numbers[l] = numbers[h];
+               numbers[h] = temp;
+
+               ++l;
+               --h;
+            }
+         }
+         return h;
+
+
+
+
+      }
+
+
+void Quicksort_medianOfThree(int numbers[], int i, int k){
+  int j;
+
+  /* Base case: If 1 or zero elements,
+     partition is already sorted */
+  if (i >= k) {
+     return;
+  }
+
+  /* Partition the array.
+     Value j is the location of last
+     element in low partition. */
+  j = Partition(numbers, i, k);
+
+  /* Recursively sort low and high
+      partitions */
+  Quicksort_medianOfThree(numbers, i, j);
+  Quicksort_medianOfThree(numbers, j + 1, k);
+}
+
+void InsertionSort(int numbers[], int numbersSize) {
+   int i = 0;
+   int j = 0;
+   int temp = 0;  // Temporary variable for swap
+
+   for (i = 1; i < numbersSize; ++i) {
+      j = i;
+      // Insert numbers[i] into sorted part
+      // stopping once numbers[i] in correct position
+      while (j > 0 && numbers[j] < numbers[j - 1]) {
+
+         // Swap numbers[j] and numbers[j - 1]
+         temp = numbers[j];
+         numbers[j] = numbers[j - 1];
+         numbers[j - 1] = temp;
+         --j;
+      }
+   }
+}
+/*
+void displayArray(int numbers[], int n){
+
+  int i;
+
+  cout<<endl<<"Array elements are:"<<endl;
+
+  for(i=0;i<n;i++){
+
+    cout <<"    "<< numbers[i] << endl;
+
+  }
+
+}
+*/
+int main(){
+
+  int arr1[NUMBERS_SIZE],arr2[NUMBERS_SIZE],arr3[NUMBERS_SIZE];
+
+fillArrays(arr1,arr2,arr3);
+
+  clock_t Start = clock();
+  Quicksort_midpoint(arr1,0,NUMBERS_SIZE-1);
+
+
+//call sort function here
+clock_t End = clock();
+int elapsedTime = (End - Start)/CLOCKS_PER_MS; // converts elapsed time from microseconds to milliseconds
+cout<< "The Quicksort_midpoint algorithm has runtime "<< elapsedTime <<endl;
+
+
+Start = clock();
+cout << "hello word" << endl;
+Quicksort_medianOfThree(arr2,0,NUMBERS_SIZE-1);
+
+
+//call sort function here
+End = clock();
+elapsedTime = (End - Start)/CLOCKS_PER_MS; // converts elapsed time from microseconds to milliseconds
+cout<< "The Quicksort_medianOfThree algorithm has runtime "<< elapsedTime <<endl;
+
+
+
+Start = clock();
+InsertionSort(arr3,NUMBERS_SIZE);
+
+//displayArray(arr3,NUMBERS_SIZE);
+//call sort function here
+End = clock();
+elapsedTime = (End - Start)/CLOCKS_PER_MS; // converts elapsed time from microseconds to milliseconds
+cout<< "The InsertionSort algorithm has runtime "<< elapsedTime <<endl;
+
+}
