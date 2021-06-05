@@ -1,49 +1,92 @@
+#include "HashTable.h"
 #include <iostream>
-#include "AVLTree.h"
+#include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
-int menu() {
-  int choice = 0;
-  cout << endl << "Enter menu choice: ";
-  cout << endl;
-  cout
-    << "1. Insert" << endl
-    << "2. Print" << endl
-    << "3. Quit" << endl;
-  cin >> choice;
+int main() {
+	// declare a few needed variables for inputing the data
+	string line;
+	int score;
+	string message = " ";
 
-  // fix buffer just in case non-numeric choice entered
-  // also gets rid of newline character
-  cin.clear();
-  cin.ignore(256, '\n');
-  return choice;
-}
+	// open input file
+	ifstream myfile("movieReviews.txt");
+	if (myfile.fail()) {
+	    cout << "could not open file" << endl;
+	    exit(1);
+	}
 
-int main( ) {
+	//create hash table
+	HashTable table(20071);
 
-  AVLTree tree;
+	while (!myfile.eof()) {
+	    myfile >> score;     // get score
+	    myfile.get();        // get blank space
+	    getline(myfile, line);
+	    int len = line.size();
+	    while(len > 0) {     // identify all individual strings
+	        string sub;
+	        len = line.find(" ");
+	        if (len > 0) {
+	            sub = line.substr(0, len);
+	            line = line.substr(len + 1, line.size());
+	        }
+	        else {
+	            sub = line.substr(0, line.size() - 1);
+	        }
+	        table.put(sub, score); // insert string with the score
+	    }
+	}
 
-  int choice = menu();
+	// after data is entered in hash function
+	// prompt user for a new movie review
+	while(message.length() > 0) {
+	    cout << "enter a review -- Press return to exit: " << endl;
+	    getline(cin, message);
 
-  string entry;
+	    // used for calculating the average
+	    double sum = 0;
+	    int count = 0;
 
-  while (choice != 3) {
+	    double sentiment = 0.0;
 
-    if (choice == 1) {
-      cout << "Enter string to insert: ";
-      getline(cin, entry);
-      cout << endl;
+	    size_t len = message.size();
+	    // get each individual word from the input
+	    while(len != string::npos) {
+	        string sub;
+	        len = message.find(" ");
+	        if (len != string::npos) {
+	            sub = message.substr(0, len);
+	            message = message.substr(len + 1, message.size());
+	        }
+	        else {
+	            sub = message;
+	        }
+	        // calculate the score of each word
+	        sum += table.getAverage(sub);
+	        ++count;
+	    }
 
-      tree.insert(entry);
+	    if (message.size() > 0) {
+	    	sentiment = sum / count;
+	        cout << "The review has an average value of " << sentiment << endl;
+	        if (sentiment >= 3.0) {
+	        	cout << "Positive Sentiment" << endl;
+	        }
+	        else if (sentiment >= 2.0) {
+	        	cout << "Somewhat Positive Sentiment" << endl;
+	        }
+	        else if (sentiment >= 1.0) {
+	        	cout << "Somewhat Negative Sentiment" << endl;
+	        }
+	        else {
+	        	cout << "Negative Sentiment" << endl;
+	        }
+	        cout << endl;
+	    }
+	}
 
-    } else if (choice == 2) {
-      tree.printBalanceFactors();
-
-    }
-    //fix buffer just in case non-numeric choice entered
-    choice = menu();
-  }
-
-  return 0;
+	return 0;
 }
